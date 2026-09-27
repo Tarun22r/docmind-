@@ -345,8 +345,10 @@ run an isolated download test
 Before troubleshooting anything else, isolate this one step from the rest of the app. Stop the server
 (Ctrl+C in the terminal running app.py), then run this command by itself:
 
-****python -c "from sentence_transformers import SentenceTransformer;
-SentenceTransformer('all-MiniLM-L6-v2')"****
+```bash
+python -c "from sentence_transformers import SentenceTransformer;
+SentenceTransformer('all-MiniLM-L6-v2')"
+```
 
 This loads only the embedding model, with no Flask, no file upload, and no FAISS involved — so it tells
 you definitively whether the model download is the problem, and if it succeeds, it fixes the issue as a
