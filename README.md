@@ -321,3 +321,67 @@ required), and the Flask routes (upload validation, chat, health check,
 404 handling). The app is designed to still start and serve pages/APIs
 even if the configured LLM provider is unreachable — it simply falls back
 to Demo Mode for that response.
+
+Troubleshooting
+
+
+Problem: Upload shows "Failed to fetch"
+
+"Failed to fetch" is a browser-level network error — it means the request never received any response
+at all, not that the server rejected something. When this happens right after selecting a file on the
+Documents page, it almost always means the upload request is hanging on the server rather than
+failing quickly.
+
+The most common cause: the very first time a document is uploaded, the app needs to load the
+Sentence Transformers embedding model (all-MiniLM-L6-v2) to generate embeddings. If that model is
+not already cached locally, Python downloads it from Hugging Face the first time it is used. If the
+machine running the server has no outbound internet access (or it is very slow/blocked), that download
+call hangs indefinitely inside the upload request. The browser eventually gives up waiting and reports
+"Failed to fetch" instead of a real error message, because the connection was dropped rather than
+answered.
+
+The fix: 
+run an isolated download test
+Before troubleshooting anything else, isolate this one step from the rest of the app. Stop the server
+(Ctrl+C in the terminal running app.py), then run this command by itself:
+
+****python -c "from sentence_transformers import SentenceTransformer;
+SentenceTransformer('all-MiniLM-L6-v2')"****
+
+This loads only the embedding model, with no Flask, no file upload, and no FAISS involved — so it tells
+you definitively whether the model download is the problem, and if it succeeds, it fixes the issue as a
+side effect (the model is cached to disk and never needs to download again).
+
+l If it downloads and finishes cleanly — the model is now cached. Restart the server with
+python app.py and try uploading again; it should now be instant.
+
+l If it hangs for a long time or fails with a connection error — the machine running the server
+has no usable outbound internet access to Hugging Face. See the two options below.
+
+If there is no internet access at all
+
+Option A — bring the model in from another machine. On any machine that does have internet
+access, run the same command above, then locate the cached model folder, typically at:
+~/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/
+Copy that folder to the same relative path on the machine running the server, then add this to .env so it
+never tries to reach the network again:
+
+HF_HUB_OFFLINE=1
+
+Option B — ask for a fully offline embedding fallback. The embedding step can be swapped for a
+simple offline method (such as a hashing-based vectorizer) that needs no model download and no
+internet access at all, at some cost to retrieval quality compared to real semantic embeddings. This is a
+deliberate trade-off worth discussing before making, since it changes how the RAG pipeline behaves.
+
+Quick checklist before assuming it's a code bug
+
+l Is the terminal running app.py still alive, or did it crash/exit?
+
+l Does the isolated download test above hang, or does it fail instantly with an import error (missing
+package) versus a network error (no internet)?
+
+l Check whether the model is already cached: ls ~/.cache/huggingface/ (or
+~/.cache/torch/sentence_transformers/ on older versions).
+
+l If running FLASK_DEBUG=true, try setting it to false and restarting — the auto-reloader can
+occasionally drop an in-progress request if it restarts mid-upload
