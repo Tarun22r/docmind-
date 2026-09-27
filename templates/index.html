@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}DocMind AI{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Your documents, searchable.</h1>
+    <p class="hero__subtext">Upload documents and ask questions using grounded AI answers.</p>
+    <a href="{{ url_for('pages.documents_page') }}" class="btn btn--primary">Upload document</a>
+</section>
+
+<section class="panel">
+    <h2 class="panel__title">Recent documents</h2>
+
+    {% if documents %}
+    <table class="doc-table">
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Chunks</th>
+                <th>Uploaded</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+            <tr>
+                <td>{{ doc.filename }}</td>
+                <td class="muted">{{ doc.file_type|upper }}</td>
+                <td><span class="status-badge status-badge--{{ doc.status }}">{{ doc.status }}</span></td>
+                <td class="muted">{{ doc.chunk_count }}</td>
+                <td class="muted">{{ doc.upload_time.strftime('%d %b %Y, %H:%M') if doc.upload_time else '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('pages.chat_page') }}" class="link">Go to chat &rarr;</a>
+    {% else %}
+    <div class="empty-state">
+        <p>No documents yet.</p>
+        <p class="muted">Upload a PDF, DOCX or TXT file to get started.</p>
+        <a href="{{ url_for('pages.documents_page') }}" class="btn btn--secondary">Upload document</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

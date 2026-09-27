@@ -1,0 +1,23 @@
+# --- Web framework -----------------------------------------------------
+Flask
+Flask-CORS
+Werkzeug
+
+# --- Data / validation -----------------------------------------------------
+SQLAlchemy
+pydantic
+
+# --- Document processing -----------------------------------------------------
+PyMuPDF
+python-docx
+
+# --- RAG / embeddings / vector search -----------------------------------------------------
+sentence-transformers
+faiss-cpu
+numpy
+
+# --- LLM HTTP calls -----------------------------------------------------
+requests
+
+# --- Testing -----------------------------------------------------
+pytest      

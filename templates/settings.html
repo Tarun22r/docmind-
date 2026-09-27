@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Settings — DocMind AI{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2 class="panel__title">Settings</h2>
+    <p class="panel__subtext">Configured via environment variables. Edit <code>.env</code> and restart the app to change these.</p>
+
+    <table class="settings-table">
+        <tbody>
+            <tr><th>LLM provider</th><td>{{ settings.LLM_PROVIDER }}</td></tr>
+            <tr><th>Model</th><td>{{ settings.MODEL_NAME }}</td></tr>
+            <tr><th>Demo mode</th><td>{{ "Yes — no API key configured" if settings.demo_mode else "No" }}</td></tr>
+            <tr><th>Embedding model</th><td>{{ settings.EMBEDDING_MODEL }}</td></tr>
+            <tr><th>Chunk size</th><td>{{ settings.CHUNK_SIZE }} characters</td></tr>
+            <tr><th>Chunk overlap</th><td>{{ settings.CHUNK_OVERLAP }} characters</td></tr>
+            <tr><th>Top-K retrieval</th><td>{{ settings.TOP_K }} chunks</td></tr>
+        </tbody>
+    </table>
+</section>
+{% endblock %}

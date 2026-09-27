@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DocMind AI{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header__inner">
+            <a href="{{ url_for('pages.index') }}" class="brand">
+                <span class="brand__name">DocMind AI</span>
+                <span class="brand__subtitle">Ask questions about your documents.</span>
+            </a>
+            <nav class="main-nav">
+                <a href="{{ url_for('pages.documents_page') }}" class="{{ 'is-active' if active_page == 'documents' else '' }}">Documents</a>
+                <a href="{{ url_for('pages.chat_page') }}" class="{{ 'is-active' if active_page == 'chat' else '' }}">Chat</a>
+                <a href="{{ url_for('pages.history_page') }}" class="{{ 'is-active' if active_page == 'history' else '' }}">History</a>
+                <a href="{{ url_for('pages.settings_page') }}" class="{{ 'is-active' if active_page == 'settings' else '' }}">Settings</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

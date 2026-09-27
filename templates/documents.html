@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Documents — DocMind AI{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2 class="panel__title">Upload a document</h2>
+    <p class="panel__subtext">PDF, DOCX or TXT — up to 10 MB</p>
+
+    <div class="upload-area" id="upload-area">
+        <p id="upload-area-text">Drag a file here, or</p>
+        <label class="btn btn--secondary">
+            Choose file
+            <input type="file" id="file-input" accept=".pdf,.docx,.txt" hidden>
+        </label>
+        <button type="button" class="btn btn--ghost" id="load-sample-btn">Load sample document</button>
+    </div>
+
+    <div id="upload-status" class="upload-status" hidden></div>
+</section>
+
+<section class="panel">
+    <h2 class="panel__title">Your documents</h2>
+
+    <div id="documents-list">
+        {% if documents %}
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Pages</th>
+                    <th>Chunks</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr data-document-id="{{ doc.id }}">
+                    <td>{{ doc.filename }}</td>
+                    <td class="muted">{{ "%.1f"|format(doc.file_size / 1024 / 1024) }} MB</td>
+                    <td class="muted">{{ doc.page_count or "—" }}</td>
+                    <td class="muted">{{ doc.chunk_count }}</td>
+                    <td>
+                        <span class="status-badge status-badge--{{ doc.status }}">{{ doc.status }}</span>
+                        {% if doc.status == 'failed' and doc.error_message %}
+                        <div class="error-text">{{ doc.error_message }}</div>
+                        {% endif %}
+                    </td>
+                    <td><button class="btn btn--ghost btn--small delete-doc-btn" data-document-id="{{ doc.id }}">Delete</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <p>No documents yet.</p>
+            <p class="muted">Upload a PDF, DOCX or TXT file to get started.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

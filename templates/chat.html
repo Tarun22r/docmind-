@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Chat — DocMind AI{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <aside class="chat-sidebar">
+        <h3 class="chat-sidebar__title">Documents</h3>
+        {% if documents %}
+        <label class="doc-checkbox doc-checkbox--all">
+            <input type="checkbox" id="doc-select-all" checked>
+            All documents
+        </label>
+        <ul class="doc-checkbox-list">
+            {% for doc in documents %}
+            <li>
+                <label class="doc-checkbox">
+                    <input type="checkbox" class="doc-scope-checkbox" value="{{ doc.id }}" checked>
+                    {{ doc.filename }}
+                </label>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted">No ready documents yet.</p>
+        <a href="{{ url_for('pages.documents_page') }}" class="link">Upload a document &rarr;</a>
+        {% endif %}
+    </aside>
+
+    <section class="chat-main">
+        <div class="chat-header">
+            <h2>Ask your documents</h2>
+            <p class="muted">Answers are generated using retrieved document context.</p>
+            {% if demo_mode %}
+            <p class="demo-banner">Demo Mode — no LLM API key configured. Answers show the most relevant retrieved passage instead of an LLM-generated response.</p>
+            {% endif %}
+        </div>
+
+        <div id="conversation" class="conversation">
+            <div class="empty-state empty-state--chat" id="conversation-empty">
+                <p class="muted">Ask a question about your uploaded documents to get started.</p>
+            </div>
+        </div>
+
+        <form id="chat-form" class="chat-input-row">
+            <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off" {% if not documents %}disabled{% endif %}>
+            <button type="submit" class="btn btn--primary" {% if not documents %}disabled{% endif %}>Ask</button>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

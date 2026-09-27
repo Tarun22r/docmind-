@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Environment
+.env
+
+# Database
+docmind.db
+*.sqlite3
+
+# Uploaded files & vector index (regenerated at runtime)
+uploads/*
+!uploads/.gitkeep
+vector_store/*
+!vector_store/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Tests
+.pytest_cache/

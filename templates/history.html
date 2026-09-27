@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}History — DocMind AI{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2 class="panel__title">Conversation history</h2>
+
+    {% if conversations %}
+    <ul class="history-list">
+        {% for conv in conversations %}
+        <li class="history-item">
+            <div>
+                <div class="history-item__title">{{ conv.title }}</div>
+                <div class="muted">
+                    {{ conv.created_at.strftime('%d %b %Y') if conv.created_at else '' }}
+                    &middot;
+                    {% set doc_ids = conv.document_ids.split(',') if conv.document_ids else [] %}
+                    {{ doc_ids|reject('equalto', '')|list|length }} document(s)
+                </div>
+            </div>
+            <a href="{{ url_for('pages.chat_page') }}?conversation_id={{ conv.id }}" class="link">Open &rarr;</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+        <p>No conversations yet.</p>
+        <p class="muted">Start a chat to see it appear here.</p>
+        <a href="{{ url_for('pages.chat_page') }}" class="btn btn--secondary">Go to chat</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
